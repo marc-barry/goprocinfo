@@ -16,13 +16,16 @@ func (self *CPUInfo) NumCPU() int {
 }
 
 type Processor struct {
-	Id        int64    `json:"id"`
-	VendorId  string   `json:"vendor_id"`
-	Model     int64    `json:"model"`
-	ModelName string   `json:"model_name"`
-	Flags     []string `json:"flags"`
-	Cores     int64    `json:"cores"`
-	MHz       float64  `json:"mhz"`
+	Id         int64    `json:"id"`
+	VendorId   string   `json:"vendor_id"`
+	Model      int64    `json:"model"`
+	ModelName  string   `json:"model_name"`
+	Flags      []string `json:"flags"`
+	PhysicalId int64    `json:"physical_id"`
+	Siblings   int64    `json:"siblings"`
+	CoreId     int64    `json:"core_id"`
+	Cores      int64    `json:"cores"`
+	MHz        float64  `json:"mhz"`
 }
 
 var cpuinfoRegExp = regexp.MustCompile("([^:]*?)\\s*:\\s*(.*)$")
@@ -67,6 +70,12 @@ func ReadCPUInfo(path string) (*CPUInfo, error) {
 			processor.ModelName = value
 		case "flags":
 			processor.Flags = strings.Fields(value)
+		case "physical id":
+			processor.PhysicalId, _ = strconv.ParseInt(value, 10, 32)
+		case "siblings":
+			processor.Siblings, _ = strconv.ParseInt(value, 10, 32)
+		case "core id":
+			processor.CoreId, _ = strconv.ParseInt(value, 10, 32)
 		case "cpu cores":
 			processor.Cores, _ = strconv.ParseInt(value, 10, 32)
 		case "cpu MHz":
